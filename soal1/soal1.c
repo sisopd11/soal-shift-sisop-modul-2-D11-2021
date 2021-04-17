@@ -186,7 +186,7 @@ int main() {
       }
     } 
     
-    sleep(180);
+    sleep(60);
   }
   
   
