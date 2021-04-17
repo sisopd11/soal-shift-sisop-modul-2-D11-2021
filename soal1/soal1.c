@@ -16,9 +16,9 @@ void downloadF()
   char *LINK[3] = {"https://drive.google.com/uc?id=1FsrAzb9B5ixooGUs0dGiBr-rC7TS9wTD&export=download",
                     "https://drive.google.com/uc?id=1ZG8nRBRPquhYXq_sISdsVcXx5VdEgi-J&export=download",
                     "https://drive.google.com/uc?id=1ktjGgDkL0nNpY-vT7rT7O6ZI47Ke9xcp&export=download"};
-  char *file[3] = {"/home/avind/Desktop/shift2/soal3/Foto_for_Stevany.zip", 
-                  "/home/avind/Desktop/shift2/soal3/Musik_for_Stevany.zip", 
-                  "/home/avind/Desktop/shift2/soal3/Film_for_Stevany.zip"};
+  char *file[3] = {"/home/avind/Desktop/shift2/soal1/Foto_for_Stevany.zip", 
+                  "/home/avind/Desktop/shift2/soal1/Musik_for_Stevany.zip", 
+                  "/home/avind/Desktop/shift2/soal1/Film_for_Stevany.zip"};
 
   for(int i=0;i<3;i++)
   {
@@ -35,15 +35,15 @@ void downloadF()
 
 void unzipF()
 {
-  char *file[3] = {"/home/avind/Desktop/shift2/soal3/Foto_for_Stevany.zip", 
-                    "/home/avind/Desktop/shift2/soal3/Musik_for_Stevany.zip", 
-                    "/home/avind/Desktop/shift2/soal3/Film_for_Stevany.zip"};
+  char *file[3] = {"/home/avind/Desktop/shift2/soal1/Foto_for_Stevany.zip", 
+                    "/home/avind/Desktop/shift2/soal1/Musik_for_Stevany.zip", 
+                    "/home/avind/Desktop/shift2/soal1/Film_for_Stevany.zip"};
 
   for(int i=0;i<3;i++)
   {
       if(fork() == 0)
       {
-          char *argv[] = {"unzip", file[i], "-d", "/home/avind/Desktop/shift2/soal3/", NULL};
+          char *argv[] = {"unzip", file[i], "-d", "/home/avind/Desktop/shift2/soal1/", NULL};
           execvp("/usr/bin/unzip", argv);
           exit(0);
       }
@@ -55,9 +55,9 @@ void unzipF()
 
 void removeF()
 {
-  char *file[3] = {"/home/avind/Desktop/shift2/soal3/Foto_for_Stevany.zip", 
-                    "/home/avind/Desktop/shift2/soal3/Musik_for_Stevany.zip", 
-                    "/home/avind/Desktop/shift2/soal3/Film_for_Stevany.zip"};
+  char *file[3] = {"/home/avind/Desktop/shift2/soal1/Foto_for_Stevany.zip", 
+                    "/home/avind/Desktop/shift2/soal1/Musik_for_Stevany.zip", 
+                    "/home/avind/Desktop/shift2/soal1/Film_for_Stevany.zip"};
 
 
   for(int i=0;i<3;i++)
@@ -78,13 +78,13 @@ void removeF()
 
 void renameF()
 {
-  char *filehasil[3] = {"/home/avind/Desktop/shift2/soal3/FOTO", 
-                        "/home/avind/Desktop/shift2/soal3/MUSIK", 
-                        "/home/avind/Desktop/shift2/soal3/FILM"};
+  char *filehasil[3] = {"/home/avind/Desktop/shift2/soal1/FOTO", 
+                        "/home/avind/Desktop/shift2/soal1/MUSIK", 
+                        "/home/avind/Desktop/shift2/soal1/FILM"};
     
-  char *filebaru[3] = {"/home/avind/Desktop/shift2/soal3/Pyoto", 
-                      "/home/avind/Desktop/shift2/soal3/Musyik", 
-                      "/home/avind/Desktop/shift2/soal3/Fylm"};
+  char *filebaru[3] = {"/home/avind/Desktop/shift2/soal1/Pyoto", 
+                      "/home/avind/Desktop/shift2/soal1/Musyik", 
+                      "/home/avind/Desktop/shift2/soal1/Fylm"};
   
   for(int i=0;i<3;i++)
   
@@ -102,7 +102,7 @@ void renameF()
 
 void zipF()
 {
-  chdir("/home/avind/Desktop/shift2/soal3/");
+  chdir("/home/avind/Desktop/shift2/soal1/");
   char *file[3] = {"Pyoto", 
                   "Musyik", 
                   "Fylm"};
@@ -110,7 +110,7 @@ void zipF()
     if(fork() == 0)
     {
        char *argv[] = {"zip", "-r", "-m", 
-                      "/home/avind/Desktop/shift2/soal3/Lopyu_Stevany.zip", 
+                      "/home/avind/Desktop/shift2/soal1/Lopyu_Stevany.zip", 
                       file[0], file[1], file[2], NULL};
         execvp("zip", argv);
         exit(0);
