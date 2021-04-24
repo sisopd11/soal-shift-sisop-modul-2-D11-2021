@@ -1,34 +1,3 @@
-Skip to content
-Search or jump to…
-
-Pull requests
-Issues
-Marketplace
-Explore
- 
-@afifahsabrina 
-afifahsabrina
-/
-soal-shift-sisop-modul-2-D11-2021
-Private
-1
-00
-Code
-Issues
-Pull requests
-Actions
-Projects
-Security
-Insights
-Settings
-soal-shift-sisop-modul-2-D11-2021/3ab-de
-@afifahsabrina
-afifahsabrina Encrypted Code
-Latest commit 35b3c4f 4 hours ago
- History
- 1 contributor
-177 lines (134 sloc)  3.73 KB
-  
 #include<sys/types.h>
 #include<sys/stat.h>
 #include<stdio.h>
