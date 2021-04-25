@@ -5,6 +5,168 @@ Modul 2 - Daemon dan Proses
 |Afifah Nur Sabrina Syamsudin|05111940000022|
 |Dewi Mardani Cristin|05111940000225|
 |Avind Pramana Azhari|05111940000226|
+## Soal No 2
+Loba bekerja di sebuah petshop terkenal, suatu saat dia mendapatkan zip yang berisi banyak sekali foto peliharaan dan Ia diperintahkan untuk mengkategorikan foto-foto peliharaan tersebut. Loba merasa kesusahan melakukan pekerjaanya secara manual, apalagi ada kemungkinan ia akan diperintahkan untuk melakukan hal yang sama. Kamu adalah teman baik Loba dan Ia meminta bantuanmu untuk membantu pekerjaannya.
+
+Pertama-tama program perlu mengextract zip yang diberikan ke dalam folder “/home/[user]/modul2/petshop”. Karena bos Loba teledor, dalam zip tersebut bisa berisi folder-folder yang tidak penting, maka program harus bisa membedakan file dan folder sehingga dapat memproses file yang seharusnya dikerjakan dan menghapus folder-folder yang tidak dibutuhkan.
+Foto peliharaan perlu dikategorikan sesuai jenis peliharaan, maka kamu harus membuat folder untuk setiap jenis peliharaan yang ada dalam zip. Karena kamu tidak mungkin memeriksa satu-persatu, maka program harus membuatkan folder-folder yang dibutuhkan sesuai dengan isi zip.
+Contoh: Jenis peliharaan kucing akan disimpan dalam “/petshop/cat”, jenis peliharaan kura-kura akan disimpan dalam “/petshop/turtle”.
+Setelah folder kategori berhasil dibuat, programmu akan memindahkan foto ke folder dengan kategori yang sesuai dan di rename dengan nama peliharaan.
+Contoh: “/petshop/cat/joni.jpg”. 
+Karena dalam satu foto bisa terdapat lebih dari satu peliharaan maka foto harus di pindah ke masing-masing kategori yang sesuai. Contoh: foto dengan nama “dog;baro;1_cat;joni;2.jpg” dipindah ke folder “/petshop/cat/joni.jpg” dan “/petshop/dog/baro.jpg”.
+Di setiap folder buatlah sebuah file "keterangan.txt" yang berisi nama dan umur semua peliharaan dalam folder tersebut. Format harus sesuai contoh.
+
+### a: Jawaban dan Penjelasan
+Pertama-tama program perlu mengextract zip yang diberikan ke dalam folder “/home/[user]/modul2/petshop”. Karena bos Loba teledor, dalam zip tersebut bisa berisi folder-folder yang tidak penting, maka program harus bisa membedakan file dan folder sehingga dapat memproses file yang seharusnya dikerjakan dan menghapus folder-folder yang tidak dibutuhkan.
+```
+int main()
+{
+    char path[100];
+
+        id_t child_id;
+        int status=0;
+
+        child_id = fork();
+
+        if (child_id < 0) {
+            exit(EXIT_FAILURE); 
+        }
+	
+        if (child_id == 0) {
+            char *argv[] = {"unzip", "/home/dewi/modul2/pets.zip", "*.jpg", "-d", "/home/dewi/modul2/petshop", NULL};
+            execv("/usr/bin/unzip", argv);
+        } else {
+            while(wait(&status) > 0);
+            checkFiles("/home/dewi/modul2/petshop");
+        }
+    return 0;
+}
+```
+Jadi berdasarkan syntax diatas untuk memngekstrak zip dan menghapus folder yang tidak  penting kita dapat menggunakan syntax 
+```char *argv[] = {"unzip", "/home/dewi/modul2/pets.zip", "*.jpg", "-d", "/home/dewi/modul2/petshop", NULL};```
+- ```-unzip``` = Untuk penamaan perintah
+- ``` "/home/dewi/modul2/pets.zip"``` = tempat dimana file yang akan diekstrak berada
+- ``` "*.jpg"``` = Untuk mengunzip file yang hanya bertipe jpg
+- ```-d``` = Untuk menunjuk ke directory mana file akan di unzip
+- ```"/home/dewi/modul2/petshop"``` = sebagai tempat peleteakkan file zip yang tealh di ekstrak
+kemudian syntax tersebut kita eksekusi dengan perintah sebagai berikut
+```execv("/usr/bin/unzip", argv);```
+B. Foto peliharaan perlu dikategorikan sesuai jenis peliharaan, maka kamu harus membuat folder untuk setiap jenis peliharaan yang ada dalam zip. Karena kamu tidak mungkin memeriksa satu-persatu, maka program harus membuatkan folder-folder yang dibutuhkan sesuai dengan isi zip. Contoh: Jenis peliharaan kucing akan disimpan dalam /petshop/cat, jenis peliharaan kura-kura akan disimpan dalam /petshop/turtle.
+
+Pertama pada fungsi ini kita akan mengujungi file-file di dalam driectory secara rekursif dan didalam fungsi rekursi ini kita akan memanggil fungsi createFolder untuk membuat folder berdasarkan jenis peliharaan.
+```
+void checkFiles(char *basePath)
+{
+    char path[1000];
+    struct dirent *dp;
+    DIR *dir = opendir(basePath);
+    char *token;
+
+    if (!dir)
+        return;
+
+    while ((dp = readdir(dir)) != NULL)
+    {
+        if (strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0)
+        {
+            char nama[656];
+            char *str;
+            str = dp->d_name;
+           
+            snprintf(nama, sizeof nama, "%s", dp->d_name);
+            token  = strtok(nama, ";_");
+
+            
+            char kind[1600], name[1600], age[1600];
+            char *info[2][3];
+            int banyak=0;
+            while(token != NULL){
+                int data = 0;
+                while(data<3){
+                    info[banyak][data] = token;
+                    token = strtok(NULL, ";_");
+                    data++;
+                }
+                banyak++;
+            }
+            char *usia;
+            for (int i = 0; i < banyak; i++) {
+                createFolder(info[i][0]);
+                copyFiles(info[i][0], info[i][1], str);
+                createKeterangan(info[i][0], info[i][1], info[i][2], i, banyak);
+            }
+            deleteFiles(str);
+            strcpy(path, basePath);
+            strcat(path, "/");
+            strcat(path, dp->d_name);
+
+            checkFiles(path);
+        }
+    }
+
+    closedir(dir);
+}
+```
+Pada fungsi ini kita akan membuat folder di dalam folder petshop berdasarkan jenis peliharaan
+```
+void createFolder(char *nameFolder){
+    int status = 0;
+    if(fork()==0){
+        char buf1[256];
+        snprintf(buf1, sizeof buf1, "petshop/%s", nameFolder);
+        char *argv[] = {"mkdir", "-p", buf1, NULL};
+        execv("/bin/mkdir", argv);
+    }
+    while(wait(&status)>0);
+}
+```
+Pada saat proses sedang berlangsung kita akan membuat folder baru pertama kita deklarasikan terlebih dahulu suatu variabel buf1 yang akan menampung penamaan folder ```snprintf``` berguna untuk mempassing suatu string ke dalam suatu variabel jadi pada case ini nama foler akan di passing ke variabel buf1. Kemudian untuk membuat directory kita dapat mendeklarasikan string argc yang berisi perintah mkdir. ```-p``` untuk membuat parent directory karena dalam file terdapat banayak jenis peliharaan yang sama jadi ktia mengunakan ```-p``` agar saat jenis peliharaan terdapat lebih dari 1 maka akan membuat 1 folder saja.Kemudian kita eksekusi perogram tadi menggunakan perintah   ```execv("/bin/mkdir", argv);```
+
+c. Setelah folder kategori berhasil dibuat, programmu akan memindahkan foto ke folder dengan kategori yang sesuai dan di rename dengan nama peliharaan. Contoh: /petshop/cat/joni.jpg.
+
+d. Karena dalam satu foto bisa terdapat lebih dari satu peliharaan maka foto harus di pindah ke masing-masing kategori yang sesuai. Contoh: foto dengan nama dog;baro;1_cat;joni;2.jpg dipindah ke folder /petshop/cat/joni.jpg” dan “/petshop/dog/baro.jpg.
+```
+void copyFiles(char *namaFolder, char *nama, char *namaFile){
+    char buf1[256];
+    char buf2[256];
+    snprintf(buf1, sizeof buf1, "petshop/%s", namaFile);
+    snprintf(buf2, sizeof buf2, "petshop/%s/%s.jpg", namaFolder, nama);
+    printf("%s\n", buf1);
+    printf("%s\n", buf2);
+    if(fork()==0){
+        char *argv[] = {"cp", buf1, buf2, NULL};
+        execv("/bin/cp", argv);
+    }
+    while(wait(&status)>0);
+}
+```
+Untuk memindahkan foto ke folder kita dengan nama yang sesuai kita dapat mengcopy file foto lalu menghapus file foto yang masih ada di directory petshop. Seperti syntax yang ada diatas pertama kita deklarasikan varaibel ```buf1``` dan ```buf2``` kemudian kita tampung nama file kedalam variable buf1 dan namafolder dan nama hewan akan kita tampung ke dalam variabel buf2. Kemudiaan ketika proses berjalan kita dapat mengcopy file ``` char *argv[] = {"cp", buf1, buf2, NULL};``` kemudian program dapat dieksekusi.
+
+e. Di setiap folder buatlah sebuah file keterangan.txt yang berisi nama dan umur semua peliharaan dalam folder tersebut. Format harus sesuai contoh.
+```
+void createKeterangan(char *folder, char *namaHewan, char *umurHewan, int pembantu, int banyak){
+    char *umur;
+    int status = 0;
+    umur = strtok(umurHewan, ".jpg");
+    char umurReal[100];
+    strcpy(umurReal, umur);
+    // printf("umurReal = %s\n", umurReal);
+    if(strcmp(umurReal, "0") == 0){
+        umur = "0.5";
+    }
+    char buf1[10000];
+    snprintf(buf1, sizeof buf1, "petshop/%s/keterangan.txt", folder);
+    printf("%s\n", buf1);
+    FILE *keterangan;
+    keterangan = fopen(buf1, "a+");
+    fprintf(keterangan, "nama : %s", namaHewan);
+    fprintf(keterangan, "\n");
+    fprintf(keterangan, "umur : %s tahun", umur);
+    fprintf(keterangan, "\n\n");
+    fclose(keterangan);
+}
+```
+Untuk membuat keterangan disetiap file kita dapat menggunakan fopen untuk membuka file dan ```-a``` untuk membuka file sesuai nama filenya untuk ditambahkan datanya dipaling bawah baris terakhir dan apabila tidak ada maka akan otomatis menambahkan file baru. Kemudian kita dapat mencetaknya nama dan umur menggunakan fprint dan setelah selesai kita harus menutup file dengan menggunakan ```fclose```.
 
 ## Soal No 3
 Ranora adalah mahasiswa Teknik Informatika yang saat ini sedang menjalani magang di perusahan ternama yang bernama “FakeKos Corp.”, perusahaan yang bergerak dibidang keamanan data. Karena Ranora masih magang, maka beban tugasnya tidak sebesar beban tugas pekerja tetap perusahaan. Di hari pertama Ranora bekerja, pembimbing magang Ranora memberi tugas pertamanya untuk membuat sebuah program. 
