@@ -123,7 +123,6 @@ void createFolder(char *nameFolder){
 Pada saat proses sedang berlangsung kita akan membuat folder baru pertama kita deklarasikan terlebih dahulu suatu variabel buf1 yang akan menampung penamaan folder ```snprintf``` berguna untuk mempassing suatu string ke dalam suatu variabel jadi pada case ini nama foler akan di passing ke variabel buf1. Kemudian untuk membuat directory kita dapat mendeklarasikan string argc yang berisi perintah mkdir. ```-p``` untuk membuat parent directory karena dalam file terdapat banayak jenis peliharaan yang sama jadi ktia mengunakan ```-p``` agar saat jenis peliharaan terdapat lebih dari 1 maka akan membuat 1 folder saja.Kemudian kita eksekusi perogram tadi menggunakan perintah   ```execv("/bin/mkdir", argv);```
 
 c. Setelah folder kategori berhasil dibuat, programmu akan memindahkan foto ke folder dengan kategori yang sesuai dan di rename dengan nama peliharaan. Contoh: /petshop/cat/joni.jpg.
-
 d. Karena dalam satu foto bisa terdapat lebih dari satu peliharaan maka foto harus di pindah ke masing-masing kategori yang sesuai. Contoh: foto dengan nama dog;baro;1_cat;joni;2.jpg dipindah ke folder /petshop/cat/joni.jpg” dan “/petshop/dog/baro.jpg.
 ```
 void copyFiles(char *namaFolder, char *nama, char *namaFile){
@@ -167,6 +166,14 @@ void createKeterangan(char *folder, char *namaHewan, char *umurHewan, int pemban
 }
 ```
 Untuk membuat keterangan disetiap file kita dapat menggunakan fopen untuk membuka file dan ```-a``` untuk membuka file sesuai nama filenya untuk ditambahkan datanya dipaling bawah baris terakhir dan apabila tidak ada maka akan otomatis menambahkan file baru. Kemudian kita dapat mencetaknya nama dan umur menggunakan fprint dan setelah selesai kita harus menutup file dengan menggunakan ```fclose```.
+## Output
+![output1](https://user-images.githubusercontent.com/80894892/115991895-4ea9ec80-a5fd-11eb-91f7-e05e4dd341ac.png)
+
+![output2](https://user-images.githubusercontent.com/80894892/115991898-51a4dd00-a5fd-11eb-90ff-bf63d5381a70.png)
+
+![output3](https://user-images.githubusercontent.com/80894892/115991899-549fcd80-a5fd-11eb-8df7-3e80173a56e7.png)
+
+![output4](https://user-images.githubusercontent.com/80894892/115991901-56699100-a5fd-11eb-9dd4-8ada2bf05c7f.png)
 
 ## Soal No 3
 Ranora adalah mahasiswa Teknik Informatika yang saat ini sedang menjalani magang di perusahan ternama yang bernama “FakeKos Corp.”, perusahaan yang bergerak dibidang keamanan data. Karena Ranora masih magang, maka beban tugasnya tidak sebesar beban tugas pekerja tetap perusahaan. Di hari pertama Ranora bekerja, pembimbing magang Ranora memberi tugas pertamanya untuk membuat sebuah program. 
