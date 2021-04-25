@@ -5,6 +5,217 @@ Modul 2 - Daemon dan Proses
 |Afifah Nur Sabrina Syamsudin|05111940000022|
 |Dewi Mardani Cristin|05111940000225|
 |Avind Pramana Azhari|05111940000226|
+
+## Soal No 1
+1. Pada suatu masa, hiduplah seorang Steven yang hidupnya pas-pasan. Steven punya pacar, namun sudah putus sebelum pacaran. Ketika dia galau memikirkan mantan, ia selalu menonton https://www.youtube.com/watch?v=568DH_9CMKI untuk menghilangkan kesedihannya. 
+
+Di lain hal Steven anak yang tidak amat sangat super membenci matkul sisop, beberapa jam setelah diputus oleh pacarnya dia menemukan wanita lain bernama Stevany, namun Stevany berkebalikan dengan Steven karena menyukai sisop. Steven ingin terlihat jago matkul sisop demi menarik perhatian Stevany.
+
+Pada hari ulang tahun Stevany, Steven ingin memberikan Stevany zip berisikan hal-hal yang disukai Stevany. Steven ingin isi zipnya menjadi rapi dengan membuat folder masing-masing sesuai extensi. (a) Dikarenakan Stevany sangat menyukai huruf Y, Steven ingin nama folder-foldernya adalah Musyik untuk mp3, Fylm untuk mp4, dan Pyoto untuk jpg (b) untuk musik Steven mendownloadnya dari link di bawah, film dari link di bawah lagi, dan foto dari link dibawah juga :). (c) Steven tidak ingin isi folder yang dibuatnya berisikan zip, sehingga perlu meng-extract-nya setelah didownload serta (d) memindahkannya ke dalam folder yang telah dibuat (hanya file yang dimasukkan).
+
+(e) Untuk memudahkan Steven, ia ingin semua hal di atas berjalan otomatis 6 jam sebelum waktu ulang tahun Stevany). (f) Setelah itu pada waktu ulang tahunnya Stevany, semua folder akan di zip dengan nama Lopyu_Stevany.zip dan semua folder akan di delete(sehingga hanya menyisakan .zip).
+Kemudian Steven meminta bantuanmu yang memang sudah jago sisop untuk membantunya mendapatkan hati Stevany. Bantu Woy!!
+## Jawaban :
+a.  Dikarenakan Stevany sangat menyukai huruf Y, Steven ingin nama folder-foldernya adalah Musyik untuk mp3, Fylm untuk mp4, dan Pyoto untuk jpg
+```
+char *filehasil[3] = {"/home/avind/Desktop/shift2/soal1/FOTO", 
+                        "/home/avind/Desktop/shift2/soal1/MUSIK", 
+                        "/home/avind/Desktop/shift2/soal1/FILM"};
+    
+  char *filebaru[3] = {"/home/avind/Desktop/shift2/soal1/Pyoto", 
+                      "/home/avind/Desktop/shift2/soal1/Musyik", 
+                      "/home/avind/Desktop/shift2/soal1/Fylm"};
+```
+Untuk menyelesaikan soal ini pertama kita harus melangkah ke soal B terlebih dahulu karena file perlu disonload terlebih dahulu baru bisa ddiganti penamaannya. Untuk mengganti penamaannya kita dapat membuat 2 variabel, variable pertama```filehasil``` menampung nama file sebelum diganti dan variable kedua ```filebaru``` untuk menyimpan nama file yang telah diganti huruf Inya dengan huruf Y.
+
+b. untuk musik Steven mendownloadnya dari link di bawah, film dari link di bawah lagi, dan foto dari link dibawah juga :).
+```
+void downloadF()
+{
+  char *LINK[3] = {"https://drive.google.com/uc?id=1FsrAzb9B5ixooGUs0dGiBr-rC7TS9wTD&export=download",
+                    "https://drive.google.com/uc?id=1ZG8nRBRPquhYXq_sISdsVcXx5VdEgi-J&export=download",
+                    "https://drive.google.com/uc?id=1ktjGgDkL0nNpY-vT7rT7O6ZI47Ke9xcp&export=download"};
+  char *file[3] = {"/home/avind/Desktop/shift2/soal1/Foto_for_Stevany.zip", 
+                  "/home/avind/Desktop/shift2/soal1/Musik_for_Stevany.zip", 
+                  "/home/avind/Desktop/shift2/soal1/Film_for_Stevany.zip"};
+
+  for(int i=0;i<3;i++)
+  {
+      if(fork() == 0)
+      {
+          char *argv[] = {"wget", "--no-check-certificate", LINK[i], "-O", file[i], NULL};
+          execvp("/usr/bin/wget", argv);
+          exit(0);
+      }
+  }
+  for(int i=0;i<3;i++)
+  wait(NULL);
+}
+
+```
+Untuk mendownload file pada saat proses berlangsung kita dapat meggunakan syntax ```char *argv[] = {"wget", "--no-check-certificate", LINK[i], "-O", file[i], NULL};``` dimana ```wget``` merupakan variabel perintah untuk melakukan download, ``` LINK[i]``` merupakan link file yang akan di download, ```file[i]``` merupakan tempat untuk menyimpan hasil downloadan tadi. Kemudian program dapat dieksekusi dengan ```execvp("/usr/bin/wget", argv);```.
+
+c.  Steven tidak ingin isi folder yang dibuatnya berisikan zip, sehingga perlu meng-extract-nya setelah didownload serta
+```
+void unzipF()
+{
+  char *file[3] = {"/home/avind/Desktop/shift2/soal1/Foto_for_Stevany.zip", 
+                    "/home/avind/Desktop/shift2/soal1/Musik_for_Stevany.zip", 
+                    "/home/avind/Desktop/shift2/soal1/Film_for_Stevany.zip"};
+
+  for(int i=0;i<3;i++)
+  {
+      if(fork() == 0)
+      {
+          char *argv[] = {"unzip", file[i], "-d", "/home/avind/Desktop/shift2/soal1/", NULL};
+          execvp("/usr/bin/unzip", argv);
+          exit(0);
+      }
+  }
+  for(int i=0;i<3;i++)
+  wait(NULL);
+
+}
+```
+Untuk mengekstrak file zip hal pertama yang dapat ktia lakukan saat proses adalah ```  char *argv[] = {"unzip", file[i], "-d", "/home/avind/Desktop/shift2/soal1/", NULL};``` dimana ```unzip``` merupakan variabel untuk melakukan proses ekstraksi,```file[i]``` merupakan letak file yang akan diunzip, ```-d``` merupakan perintah untuk melakukan pindah directory ,``` "/home/avind/Desktop/shift2/soal1/"``` merupakan tempat untuk menemapung hasil ekstraksi. kemudian untuk mengeksekusinya kita dapat mengguakan syntax ``` execvp("/usr/bin/unzip", argv);```.
+
+d. memindahkannya ke dalam folder yang telah dibuat (hanya file yang dimasukkan).
+```
+ for(int i=0;i<3;i++)
+  
+  {
+      if(fork() == 0)
+      {
+         char *argv[] = {"mv", filehasil[i], filebaru[i], NULL};
+          execvp("mv", argv);
+          exit(0);
+      }
+  }
+```
+Untuk memindahkan ke dalam folder yang telah dibuat saat proses berjalan kita dapat menggunkan syntax ```char *argv[] = {"mv", filehasil[i], filebaru[i], NULL};``` dimana ```mv``` merupakan variabel untuk melakkukan move,```filehasil[i]``` merupakan file yang akan dipindahkan dan ```filebaru[i]``` tempat file dipindahkan. kemudian program dapat dieksekusi dengan perintah ```execvp("mv", argv);```
+
+e. Untuk memudahkan Steven, ia ingin semua hal di atas berjalan otomatis 6 jam sebelum waktu ulang tahun Stevany). 
+```
+int main() {
+  pid_t pid, sid; 
+  pid = fork();   
+  
+  if (pid < 0) {
+    exit(EXIT_FAILURE);
+  }
+
+	if (pid > 0) {
+    exit(EXIT_SUCCESS);
+  }
+
+  umask(0);
+
+  sid = setsid();
+  if (sid < 0) {
+    exit(EXIT_FAILURE);
+  }
+
+  if ((chdir("/")) < 0) {
+    exit(EXIT_FAILURE);
+  }
+
+  close(STDIN_FILENO);
+  close(STDOUT_FILENO);
+  close(STDERR_FILENO);
+	
+
+
+  struct tm dt = {0};
+  dt.tm_year = 2021 - 1900;
+  dt.tm_mon  = 4 - 1;
+  dt.tm_mday = 9;
+  dt.tm_hour = 22;
+  dt.tm_min = 22;
+  dt.tm_sec = 0;
+
+  time_t dt1 = mktime(&dt);
+
+  time_t cur_time;
+  int flag = 0;
+	
+  while (1) {
+  	
+    cur_time = time(NULL);
+    
+    struct tm ct = *localtime(&cur_time);
+    if ( dt.tm_year == ct.tm_year && dt.tm_mon == ct.tm_mon && dt.tm_mday == ct.tm_mday)
+    {
+      double seconds = difftime(dt1, cur_time);
+      if(flag == 1)
+      {
+        sleep(seconds);
+        zipF();
+      }
+      else if(seconds <= 21600 && flag == 0)
+      {
+        downloadF();
+        unzipF();
+        removeF();
+        renameF();
+        flag++;
+      }
+    } 
+    
+    sleep(60);
+  }
+  
+  
+}`
+```
+
+f. Setelah itu pada waktu ulang tahunnya Stevany, semua folder akan di zip dengan nama Lopyu_Stevany.zip dan semua folder akan di delete(sehingga hanya menyisakan .zip).
+```
+void zipF()
+{
+  chdir("/home/avind/Desktop/shift2/soal1/");
+  char *file[3] = {"Pyoto", 
+                  "Musyik", 
+                  "Fylm"};
+    
+    if(fork() == 0)
+    {
+       char *argv[] = {"zip", "-r", "-m", 
+                      "/home/avind/Desktop/shift2/soal1/Lopyu_Stevany.zip", 
+                      file[0], file[1], file[2], NULL};
+        execvp("zip", argv);
+        exit(0);
+    }
+
+    wait(NULL);
+    chdir("/");
+]
+```
+untuk mengunzip file hal yang pertama kita lakukan saat proses berjalan adalah  ```char *argv[] = {"zip", "-r", "-m", "/home/avind/Desktop/shift2/soal1/Lopyu_Stevany.zip", file[0], file[1], file[2], NULL};``` dimana zip merupakan variabel perintah untuk melakukan zip, r untuk membaca,"/home/avind/Desktop/shift2/soal1/Lopyu_Stevany.zip" merupakan nama file hasil zip, (file[0], file[1], file[2])merupakan file yang akan di zip. dan untuk menjalankan program ini dapat kita gunakan execvp("zip", argv);
+```
+void removeF()
+
+{
+  char *file[3] = {"/home/avind/Desktop/shift2/soal1/Foto_for_Stevany.zip", 
+                    "/home/avind/Desktop/shift2/soal1/Musik_for_Stevany.zip", 
+                    "/home/avind/Desktop/shift2/soal1/Film_for_Stevany.zip"};
+
+
+  for(int i=0;i<3;i++)
+  {
+      if(fork() == 0)
+      {
+          char *argv[] = {"rm", file[i], NULL};
+          execvp("/bin/rm", argv);
+          exit(0);
+      }
+  }
+  for(int i=0;i<3;i++)
+  wait(NULL);
+}
+```
+Untuk menghapus maka dapat menggunakan syntax seperti gambar diatas jadi saat proses berlangsung ```char *argv[] = {"rm", file[i], NULL};``` dimana rm merupakan variabel untuk removed dan file[i] merupakan file-file yang akan di remove. setelah itu dapat dieksekusi dengan ```  execvp("/bin/rm", argv);```
+
+
 ## Soal No 2
 Loba bekerja di sebuah petshop terkenal, suatu saat dia mendapatkan zip yang berisi banyak sekali foto peliharaan dan Ia diperintahkan untuk mengkategorikan foto-foto peliharaan tersebut. Loba merasa kesusahan melakukan pekerjaanya secara manual, apalagi ada kemungkinan ia akan diperintahkan untuk melakukan hal yang sama. Kamu adalah teman baik Loba dan Ia meminta bantuanmu untuk membantu pekerjaannya.
 
