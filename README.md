@@ -215,6 +215,10 @@ void removeF()
 ```
 Untuk menghapus maka dapat menggunakan syntax seperti gambar diatas jadi saat proses berlangsung ```char *argv[] = {"rm", file[i], NULL};``` dimana rm merupakan variabel untuk removed dan file[i] merupakan file-file yang akan di remove. setelah itu dapat dieksekusi dengan ```  execvp("/bin/rm", argv);```
 
+## Outptut
+![output5](https://user-images.githubusercontent.com/80894892/115995230-0692c600-a60d-11eb-99b0-7f179f915074.png)
+![output6](https://user-images.githubusercontent.com/80894892/115995235-08f52000-a60d-11eb-9105-5203ab587b2f.png)
+
 
 ## Soal No 2
 Loba bekerja di sebuah petshop terkenal, suatu saat dia mendapatkan zip yang berisi banyak sekali foto peliharaan dan Ia diperintahkan untuk mengkategorikan foto-foto peliharaan tersebut. Loba merasa kesusahan melakukan pekerjaanya secara manual, apalagi ada kemungkinan ia akan diperintahkan untuk melakukan hal yang sama. Kamu adalah teman baik Loba dan Ia meminta bantuanmu untuk membantu pekerjaannya.
