@@ -175,6 +175,9 @@ Untuk membuat keterangan disetiap file kita dapat menggunakan fopen untuk membuk
 
 ![output4](https://user-images.githubusercontent.com/80894892/115991901-56699100-a5fd-11eb-9dd4-8ada2bf05c7f.png)
 
+##Kendala yang dihapadpi
+- program kadang bisa berjalan lancar kadang tidak terutama bagian deleteFiles
+
 ## Soal No 3
 Ranora adalah mahasiswa Teknik Informatika yang saat ini sedang menjalani magang di perusahan ternama yang bernama “FakeKos Corp.”, perusahaan yang bergerak dibidang keamanan data. Karena Ranora masih magang, maka beban tugasnya tidak sebesar beban tugas pekerja tetap perusahaan. Di hari pertama Ranora bekerja, pembimbing magang Ranora memberi tugas pertamanya untuk membuat sebuah program. 
 
