@@ -1,85 +1,142 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<unistd.h>
-#include<fcntl.h>
-#include<sys/types.h>
-#include<wait.h>
-#include<string.h>
-#include<dirent.h>
+#include <dirent.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <unistd.h>
+#include <syslog.h>
+#include <string.h>
+#include <stdio.h>
+#include <wait.h>
 
-void soal2b(char *basePath);
-void soal2a();
+void createKeterangan(char *folder, char *namaHewan, char *umurHewan, int pembantu, int banyak){
+    char *umur;
+    int status = 0;
+    umur = strtok(umurHewan, ".jpg");
+    char umurReal[100];
+    strcpy(umurReal, umur);
+    // printf("umurReal = %s\n", umurReal);
+    if(strcmp(umurReal, "0") == 0){
+        umur = "0.5";
+    }
+    char buf1[10000];
+    snprintf(buf1, sizeof buf1, "petshop/%s/keterangan.txt", folder);
+    printf("%s\n", buf1);
+    FILE *keterangan;
+    keterangan = fopen(buf1, "a+");
+    fprintf(keterangan, "nama : %s", namaHewan);
+    fprintf(keterangan, "\n");
+    fprintf(keterangan, "umur : %s tahun", umur);
+    fprintf(keterangan, "\n\n");
+    fclose(keterangan);
+}
+
+void createFolder(char *nameFolder){
+    int status = 0;
+    if(fork()==0){
+        char buf1[256];
+        snprintf(buf1, sizeof buf1, "petshop/%s", nameFolder);
+        char *argv[] = {"mkdir", "-p", buf1, NULL};
+        execv("/bin/mkdir", argv);
+    }
+    while(wait(&status)>0);
+}
+
+void copyFiles(char *namaFolder, char *nama, char *namaFile){
+    int status = 0;
+    char buf1[256];
+    char buf2[256];
+    snprintf(buf1, sizeof buf1, "petshop/%s", namaFile);
+    snprintf(buf2, sizeof buf2, "petshop/%s/%s.jpg", namaFolder, nama);
+    printf("%s\n", buf1);
+    printf("%s\n", buf2);
+    if(fork()==0){
+        char *argv[] = {"cp", buf1, buf2, NULL};
+        execv("/bin/cp", argv);
+    }
+    while(wait(&status)>0);
+}
+
+
+void deleteFiles(char *namaFiles){
+    if(fork()==0){
+        chdir("/home/dewi/modul2/petshop");
+        char *argv[] = {"rm", namaFiles, NULL};
+        execv("/bin/rm", argv);
+    }
+}
+void checkFiles(char *basePath)
+{
+    char path[1000];
+    struct dirent *dp;
+    DIR *dir = opendir(basePath);
+    char *token;
+
+    if (!dir)
+        return;
+
+    while ((dp = readdir(dir)) != NULL)
+    {
+        if (strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0)
+        {
+            char nama[656];
+            char *str;
+            str = dp->d_name;
+           
+            snprintf(nama, sizeof nama, "%s", dp->d_name);
+            token  = strtok(nama, ";_");
+
+            
+            char kind[1600], name[1600], age[1600];
+            char *info[2][3];
+            int banyak=0;
+            while(token != NULL){
+                int data = 0;
+                while(data<3){
+                    info[banyak][data] = token;
+                    token = strtok(NULL, ";_");
+                    data++;
+                }
+                banyak++;
+            }
+            char *usia;
+            for (int i = 0; i < banyak; i++) {
+                createFolder(info[i][0]);
+                copyFiles(info[i][0], info[i][1], str);
+                createKeterangan(info[i][0], info[i][1], info[i][2], i, banyak);
+            }
+            deleteFiles(str);
+            strcpy(path, basePath);
+            strcat(path, "/");
+            strcat(path, dp->d_name);
+
+            checkFiles(path);
+        }
+    }
+
+    closedir(dir);
+}
 
 int main()
 {
-   soal2a();
-}
+    char path[100];
 
-void soal2a()
-{
-  int status;
-  pid_t child_id;
-  child_id=fork();
+        id_t child_id;
+        int status=0;
 
-  if(child_id<0){
-    exit(1);
-  }
+        child_id = fork();
 
-  if(child_id==0){
-      char *argv[]={"unzip","/home/dewi/modul2/pets.zip","-d","/home/dewi/modul2/petshop","*.jpg",NULL};
-      execv("/usr/bin/unzip",argv);
-  }
-
-  else
-  {
-     while(wait(&status)>0);
-     soal2b("petshop");
-  }
-
-}
-
-//traverse dir scr rekursif
-void soal2b(char *basePath)
-{
-  DIR *dir;
-  //menampung variabelnya
-  struct dirent *dp;
-  char path[1000];
-  char *str;
-  char nama[100];
-  char *temp;
-
-  dir = opendir(basePath);
-
-  if(!dir) return;
-
-  while((dp=readdir(dir))!=NULL){
-     int i=0;
-
-     if (strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0){
-     str = dp->d_name;
-     snprintf(nama,sizeof nama, "%s", dp->d_name);
-     temp=strtok(str,";_");
-     
-     while(temp != 0){
-        if(i==0||i==3){
-	     if(fork()==0){
-                 char buf[100];
-                 snprintf(buf,sizeof buf, "/home/dewi/modul2/petshop/%s", temp);
-                 char *argv[]={"mkdir","-p","/home/dewi/modul2/petshop",buf,NULL};
-                 execv("/bin/mkdir",argv);
-		//printf("%s\n",buf);
-            }
+        if (child_id < 0) {
+            exit(EXIT_FAILURE); 
         }
-        temp = strtok(NULL,";_");
-        i++;
-     }
-     strcpy(path,basePath);
-     strcat(path, "/");
-     strcat(path, dp->d_name);
-    
-     soal2b(path);
-  }    	 
- } 
-   closedir(dir); 
+
+        if (child_id == 0) {
+            char *argv[] = {"unzip", "/home/dewi/modul2/pets.zip", "*.jpg", "-d", "/home/dewi/modul2/petshop", NULL};
+            execv("/usr/bin/unzip", argv);
+        } else {
+            while(wait(&status) > 0);
+            checkFiles("/home/dewi/modul2/petshop");
+        }
+    return 0;
 }
